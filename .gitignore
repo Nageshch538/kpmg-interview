@@ -1,0 +1,84 @@
+# === Terraform ===
+.terraform/
+*.tfstate
+*.tfstate.backup
+crash.log
+override.tf
+override.tf.json
+*.tfvars
+terraform.tfvars.json
+.terraform.lock.hcl
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.pyo
+*.pyd
+*.pyc
+
+# === Flask ===
+instance/
+*.db
+*.sqlite3
+
+# === Environments ===
+.env
+.venv/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# === IDE files ===
+.vscode/
+.idea/
+*.swp
+
+# === Logs ===
+*.log
+
+# === OS files ===
+.DS_Store
+Thumbs.db
+
+
+# Local .terraform directory
+.terraform/
+
+# Terraform state files
+*.tfstate
+*.tfstate.*
+
+# Crash logs
+crash.log
+
+# Override files (often used for secrets or per-user configs)
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Terraform variable files (if you store secrets here)
+terraform.tfvars
+terraform.tfvars.json
+
+# SSH keys (don't commit your private/public key accidentally)
+*.pem
+*.key
+*.pub
+*.ppk
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+
+# Mac/Linux system files
+.DS_Store
+
+# Windows system files
+Thumbs.db

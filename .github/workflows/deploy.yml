@@ -60,6 +60,6 @@ jobs:
         wait-for-service-stability: true
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        region: eu-west-2     
+        region: AWS_DEFAULT_REGION     
 
    

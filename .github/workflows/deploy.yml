@@ -1,82 +1,11 @@
-# # on:
-#   push:
-#     branches:
-#       - dev
-#       - staging
-#       - main
-
-# name: Build and push to ECR
-# env:
-#   AWS_REGION: eu-west-2
-#   AWS_DEFAULT_OUTPUT: json
-#   AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-#   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  
-# jobs:
-#   build-and-push:
-#     name: Build and push
-#     runs-on: ubuntu-latest
-
-#     steps:
-#     - name: Checkout repository
-#       uses: actions/checkout@v3
-#     - name: Set deployment environment
-#       id: set_env
-#       run: |
-#         if [[ "${{ github.ref_name }}" == "dev" ]]; then
-#           echo "env_name=dev" >> $GITHUB_OUTPUT
-#         elif [[ "${{ github.ref_name }}" == "staging" ]]; then
-#           echo "env_name=staging" >> $GITHUB_OUTPUT
-#         else
-#           echo "env_name=prod" >> $GITHUB_OUTPUT
-#         fi
-
-#     - name: Log in to Amazon ECR
-#       run: |
-#         aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-   
-
-
-#     - name: Build and Push Docker image
-#       run: |
-#         IMAGE_TAG=${{ steps.set_env.outputs.env_name }}
-#         IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/kpmg-challenge1:$IMAGE_TAG
-#         docker build -t $IMAGE_URI ./app
-#         docker push $IMAGE_URI
-    
-#     - name: Replace image URI in task definition
-#       run: |
-#         IMAGE_TAG=${{ steps.set_env.outputs.env_name }}
-#         IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/kpmg-challenge1:$IMAGE_TAG
-#         sed -i "s|IMAGE_URI|$IMAGE_URI|g" ecs-task-definition.json
-  
-#     - name: Deploy to ECS
-#       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-#       with:
-#         task-definition: ecs-task-definition.json
-#         service: flaskapp-service
-#         cluster: flaskapp-cluster
-#         wait-for-service-stability: true
-#       env:  
-#         ECR_REPO: ${{ secrets.ECR_REPO }}
-#         APP_NAME: ${{ secrets.APP_NAME }}
-#         IMAGE_TAG: ${{ steps.set_env.outputs.env_name }}
-#     - name: Update ECS service with new image
-#       run: |
-#         aws ecs update-service \
-#           --cluster ${{ env.APP_NAME }}-cluster \
-#           --service ${{ env.APP_NAME }}-service \
-#           --force-new-deployment
-name: Build and Deploy to ECS via ECR
-
 on:
   push:
     branches:
       - dev
       - staging
       - main
-
+      
+name: Build and Deploy to ECS via ECR
 env:
   AWS_REGION: eu-west-2
   AWS_DEFAULT_OUTPUT: json

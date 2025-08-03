@@ -55,13 +55,13 @@ jobs:
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: kpmg-challenge1-task.json
-        cluster: kpmg-challenge1
+        cluster: kpmg-challenge1-ecs-cluster
         service: kpmg-challenge1-service
         wait-for-service-stability: true
 
     - name: Force ECS Service Deployment (optional)
       run: |
         aws ecs update-service \
-          --cluster kpmg-challenge1 \
+          --cluster kpmg-challenge1-ecs-cluster \
           --service kpmg-challenge1-service \
           --force-new-deployment

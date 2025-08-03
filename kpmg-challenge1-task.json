@@ -1,8 +1,8 @@
 {
   "family": "kpmg-challenge1-task",
   "networkMode": "awsvpc",
-  "executionRoleArn": "arn:aws:iam::<AWS_ACCOUNT_ID>:role/kpmg-challenge1-ecs-task-execution-role",
-  "taskRoleArn": "arn:aws:iam::<AWS_ACCOUNT_ID>:role/kpmg-challenge1-ecs-task-execution-role",
+  "executionRoleArn": "arn:aws:iam::389595560555:role/kpmg-challenge1-ecs-task-execution-role",
+  "taskRoleArn": "arn:aws:iam::389595560555:role/kpmg-challenge1-ecs-task-execution-role",
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "256",
   "memory": "512",

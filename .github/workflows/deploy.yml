@@ -120,7 +120,7 @@ jobs:
       run: |
         IMAGE_TAG=${{ steps.set_env.outputs.env_name }}
         IMAGE_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/kpmg-challenge1:$IMAGE_TAG
-        sed "s|IMAGE_URI|$IMAGE_URI|g" ecs-task-definition.json > ecs-task-${IMAGE_TAG}.json
+        sed "s|IMAGE_URI|$IMAGE_URI|g" kpmg-challenge1-task.json 
 
     - name: Register and Deploy Task Definition to ECS
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1

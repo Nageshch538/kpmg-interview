@@ -4,7 +4,7 @@ resource "aws_vpc" "main" {
   enable_dns_support   = true
   enable_dns_hostnames = true
   tags = {
-    Name = "flask-app-vpc"
+    Name = "${var.app_name}-vpc"
   }
 }
 
@@ -24,7 +24,7 @@ resource "aws_subnet" "public" {
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
   tags = {
-    Name = "flask-app-igw"
+    Name = "${var.app_name}-igw"
   }
 }
 
@@ -36,7 +36,7 @@ resource "aws_route_table" "public" {
     gateway_id = aws_internet_gateway.main.id
   }
   tags = {
-    Name = "flask-app-public-rt"
+    Name = "${var.app_name}-public-rt"
   }
 }
 
@@ -50,7 +50,7 @@ resource "aws_route_table_association" "public" {
 # Security Group for ALB (allow HTTP 80 from internet)
 resource "aws_security_group" "alb_sg" {
   vpc_id = aws_vpc.main.id
-  name   = "flask-app-alb-sg"
+  name   = "${var.app_name}-alb-sg"
 
   ingress {
     from_port   = 80
@@ -67,12 +67,37 @@ resource "aws_security_group" "alb_sg" {
   }
 
   tags = {
-    Name = "flask-app-alb-sg"
+    Name = "${var.app_name}-alb-sg"
+  }
+}
+
+# ECS Task SG - allow inbound from ALB SG on app_port (5000)
+resource "aws_security_group" "ecs_task_sg" {
+  name        = "${var.app_name}-ecs-task-sg"
+  description = "Allow inbound traffic from ALB"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port       = var.app_port
+    to_port         = var.app_port
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb_sg.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.app_name}-ecs-task-sg"
   }
 }
 
 # Security Group for EC2 instances (allow 8081 from ALB)
-resource "aws_security_group" "ec2_sg" {
+/*resource "aws_security_group" "ec2_sg" {
   vpc_id = aws_vpc.main.id
   name   = "flask-app-ec2-sg"
 
@@ -100,4 +125,4 @@ resource "aws_security_group" "ec2_sg" {
   tags = {
     Name = "flask-app-ec2-sg"
   }
-}
+}*/

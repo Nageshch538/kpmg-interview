@@ -25,8 +25,8 @@ data "aws_ami" "latest_amazon_linux" {
 }
 
 # EC2 Key Pair
-resource "aws_key_pair" "my_key" {
-  key_name   = "my-key"
+resource "aws_key_pair" "Ec2_key" {
+  key_name   = "Ec2-key"
   public_key = file(var.public_key_path)
 }
 
@@ -35,8 +35,8 @@ resource "aws_instance" "this" {
   ami                         = data.aws_ami.latest_amazon_linux.id
   instance_type               = var.instance_type
   subnet_id                   = aws_subnet.public[0].id
-  vpc_security_group_ids      = [aws_security_group.ec2_sg.id]
-  key_name                    = aws_key_pair.my_key.key_name
+  vpc_security_group_ids      = [aws_security_group.alb_sg.id]
+  key_name                    = aws_key_pair.Ec2_key.key_name
 
   user_data = <<-EOF
               #!/bin/bash
@@ -44,7 +44,7 @@ resource "aws_instance" "this" {
               amazon-linux-extras install docker -y
               service docker start
               usermod -a -G docker ec2-user
-              docker run -d -p 8081:8081 ${var.docker_image}
+              docker run -d -p 5000:5000 ${var.docker_image}
               EOF
 
   tags = {
@@ -69,10 +69,10 @@ resource "aws_launch_template" "flask_app" {
 
   network_interfaces {
     associate_public_ip_address = true
-    security_groups              = [aws_security_group.ec2_sg.id]
+    security_groups              = [aws_security_group.alb_sg.id]
   }
 
-  key_name  = aws_key_pair.my_key.key_name
+  key_name  = aws_key_pair.Ec2_key.key_name
   user_data = filebase64("userdata.sh")
 
   tag_specifications {
@@ -83,7 +83,7 @@ resource "aws_launch_template" "flask_app" {
   }
 }
 
-# Auto Scaling Group
+/*# Auto Scaling Group
 resource "aws_autoscaling_group" "flask_app-asg" {
   name                = var.asg_name
   max_size            = 1
@@ -102,6 +102,128 @@ resource "aws_autoscaling_group" "flask_app-asg" {
     value               = var.asg_name
     propagate_at_launch = true
   }
+}
+
+
+# Security Group allowing HTTP inbound (adjust as needed)
+resource "aws_security_group" "ecs_sg" {
+  name        = "${var.app_name}-sg"
+  description = "Allow inbound HTTP and ephemeral ports"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = var.app_port
+    to_port     = var.app_port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   =  5000
+    to_port     =  5000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}*/
+# ECS Cluster
+resource "aws_ecs_cluster" "main" {
+  name = "${var.app_name}-ecs-cluster"
+}
+
+# IAM Role and Policy for ECS Task Execution (required for ECR pull)
+resource "aws_iam_role" "ecs_task_execution_role" {
+  name = "${var.app_name}-ecs-task-execution-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action    = "sts:AssumeRole"
+      Effect    = "Allow"
+      Principal = {
+        Service = "ecs-tasks.amazonaws.com"
+      }
+    }]
+  })
+}
+
+resource "aws_iam_policy_attachment" "ecs_task_execution_role_policy" {
+  name       = "${var.app_name}-ecs-task-execution-role-policy-attach"
+  roles      = [aws_iam_role.ecs_task_execution_role.name]
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+# ECS Task Definition
+resource "aws_ecs_task_definition" "task" {
+  family                   = "${var.app_name}-task"
+  cpu                      = "512"
+  memory                   = "1024"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+
+  execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn      = aws_iam_role.ecs_task_execution_role.arn
+
+  container_definitions = jsonencode([
+    {
+      name      = "flaskapp-container"
+      image     = "${var.aws_account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.app_name}:latest"
+      essential = true
+      portMappings = [{
+        containerPort = var.app_port
+        protocol      = "tcp"
+      }]
+      environment = [
+        # Add env vars if any
+      ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = aws_cloudwatch_log_group.log_group.name
+          "awslogs-region"        = var.aws_region
+          "awslogs-stream-prefix" = var.app_name
+        }
+      }
+    }
+  ])
+}
+
+
+# CloudWatch Log Group
+resource "aws_cloudwatch_log_group" "log_group" {
+  name              = "/ecs/${var.app_name}"
+  retention_in_days = 7
+}
+
+# ECS Service
+resource "aws_ecs_service" "service" {
+  name            = "${var.app_name}-service"
+  cluster         = aws_ecs_cluster.main.id
+  task_definition = aws_ecs_task_definition.task.arn
+  desired_count   = 2
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    subnets         = aws_subnet.public[*].id
+    security_groups = [aws_security_group.ecs_task_sg.id]
+    assign_public_ip = true
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.flask_tg.arn
+    container_name   = "flaskapp-container"
+    container_port   = var.app_port
+  }
+
+  depends_on = [
+    aws_lb_listener.http_listener
+  ]
 }
 
 /*# S3 Bucket for Remote State

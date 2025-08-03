@@ -63,3 +63,27 @@ variable "spot_max_price" {
   description = "Max price for the spot instance"
   type        = string
 }
+
+variable "aws_account_id" {
+  description = "AWS Account ID for ECR image"
+  type        = string
+}
+
+variable "app_name" {
+  description = "Application name, used for naming resources"
+  type        = string
+  default     = "kpmg-challenge1"
+}
+
+variable "app_port" {
+  description = "Port on which the container listens"
+  type        = number
+  default     = 5000
+}
+
+variable "aws_region" {
+  description = "AWS region to deploy resources"
+  type        = string
+  default     = "eu-west-2"
+}
+

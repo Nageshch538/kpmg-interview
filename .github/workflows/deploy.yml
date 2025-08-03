@@ -56,7 +56,7 @@ jobs:
       with:
         task-definition: kpmg-challenge1-task.json
         cluster: kpmg-challenge1
-        service: kpmg-challene1-service
+        service: kpmg-challenge1-service
         wait-for-service-stability: true
 
     - name: Force ECS Service Deployment (optional)

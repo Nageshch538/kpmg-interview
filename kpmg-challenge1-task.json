@@ -8,7 +8,7 @@
   "memory": "512",
   "containerDefinitions": [
     {
-      "name": "flaskapp",
+      "name": "flaskapp-container",
       "image": "IMAGE_URI"
 ,
       "portMappings": [

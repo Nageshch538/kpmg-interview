@@ -11,5 +11,4 @@ provider "aws" {
   # Configuration options
   region                   = var.aws_region
   shared_credentials_files = ["~/.aws/credentials"]
-  profile                  = "default"
 }

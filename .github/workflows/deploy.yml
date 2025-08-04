@@ -46,11 +46,12 @@ jobs:
       run: terraform validate
 
     - name: Terraform Plan
-      run: terraform plan -var-file="./environments/${{ steps.set_env.outputs.env_name }}.tfvars"
+      run: terraform plan -var-file="environments/${{ steps.set_env.outputs.env_name }}/${{ steps.set_env.outputs.env_name }}.tfvars"
 
     - name: Terraform Apply
       if: github.ref_name == 'main' || github.ref_name == 'staging' || github.ref_name == 'dev'
-      run: terraform apply -auto-approve -var-file="environments/${{ steps.set_env.outputs.env_name }}.tfvars"
+      run: terraform apply -auto-approve -var-file="environments/${{ steps.set_env.outputs.env_name }}/${{ steps.set_env.outputs.env_name }}.tfvars"
+
         
     - name: Log in to Amazon ECR
       run: |

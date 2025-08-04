@@ -5,7 +5,7 @@
 crash.log
 override.tf
 override.tf.json
-*.tfvars
+#*.tfvars
 terraform.tfvars.json
 .terraform.lock.hcl
 
@@ -30,7 +30,7 @@ instance/
 .env
 .venv/
 venv/
-ENV/
+#ENV/
 env.bak/
 venv.bak/
 
@@ -64,8 +64,8 @@ override.tf.json
 *_override.tf.json
 
 # Terraform variable files (if you store secrets here)
-terraform.tfvars
-terraform.tfvars.json
+#terraform.tfvars
+#terraform.tfvars.json
 
 # SSH keys (don't commit your private/public key accidentally)
 *.pem

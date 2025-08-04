@@ -27,7 +27,7 @@ data "aws_ami" "latest_amazon_linux" {
 # EC2 Key Pair
 resource "aws_key_pair" "Ec2_key" {
   key_name   = "Ec2-key"
-  public_key = file(var.public_key_path)
+  public_key = var.ec2_public_key
 }
 
 # EC2 Standalone Instance

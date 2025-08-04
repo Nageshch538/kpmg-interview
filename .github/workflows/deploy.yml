@@ -12,6 +12,7 @@ env:
   AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  EC2_PUBLIC_KEY: ${{ secrets.EC2_PUBLIC_KEY }}
 
 jobs:
   build-and-deploy:
@@ -46,7 +47,8 @@ jobs:
       run: terraform validate
 
     - name: Terraform Plan
-      run: terraform plan -var-file="environments/${{ steps.set_env.outputs.env_name }}/${{ steps.set_env.outputs.env_name }}.tfvars"
+      run: terraform plan -var="ec2_public_key=$EC2_PUBLIC_KEY"
+
 
     - name: Terraform Apply
       if: github.ref_name == 'main' || github.ref_name == 'staging' || github.ref_name == 'dev'

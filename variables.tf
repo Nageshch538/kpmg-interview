@@ -20,6 +20,10 @@ variable "public_key_path" {
   type        = string
 }
 
+variable "ec2_public_key" {
+  description = "The public SSH key string used for EC2 key pair"
+  type        = string
+}
 # ---- Docker and App ----
 variable "docker_image" {
   description = "Docker image to run in user data"

@@ -34,6 +34,9 @@ jobs:
           echo "env_name=prod" >> $GITHUB_OUTPUT
         fi
 
+    - name: Create tfvars file from GitHub secrets
+      run: echo 'ec2_public_key = "${{ secrets.EC2_PUBLIC_KEY }}"' > environments/dev.tfvars    
+
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v2
 

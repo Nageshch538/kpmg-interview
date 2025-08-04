@@ -1,24 +1,3 @@
-# ---- Backend Configuration ----
-variable "backend_bucket" {
-  description = "Name of the S3 bucket for Terraform backend state"
-  type        = string
-}
-
-variable "backend_key" {
-  description = "Key path for the state file in the S3 bucket"
-  type        = string
-}
-
-variable "backend_region" {
-  description = "AWS region where the backend S3 bucket and DynamoDB table are located"
-  type        = string
-}
-
-variable "backend_dynamodb_table" {
-  description = "DynamoDB table name for Terraform state locking"
-  type        = string
-}
-
 # ---- AMI Settings ----
 variable "ami_name_pattern" {
   description = "AMI name filter pattern"
@@ -87,3 +66,23 @@ variable "aws_region" {
   default     = "eu-west-2"
 }
 
+# ---- Backend Configuration ----
+variable "backend_bucket" {
+  description = "Name of the S3 bucket for Terraform backend state"
+  type        = string
+}
+
+variable "backend_key" {
+  description = "Key path for the state file in the S3 bucket"
+  type        = string
+}
+
+variable "backend_region" {
+  description = "AWS region where the backend S3 bucket and DynamoDB table are located"
+  type        = string
+}
+
+variable "backend_dynamodb_table" {
+  description = "DynamoDB table name for Terraform state locking"
+  type        = string
+}

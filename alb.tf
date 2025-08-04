@@ -67,9 +67,9 @@ resource "aws_lb_target_group" "flask_tg" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
   }
-    tags = {
-        Name = "${var.app_name}-tg"
-      }
+  tags = {
+    Name = "${var.app_name}-tg"
+  }
 }
 
 # ALB Listener

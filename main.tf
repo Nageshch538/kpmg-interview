@@ -1,10 +1,10 @@
 terraform {
   backend "s3" {
-    bucket         = "flaskapp-terraformstate-bucket"   # hardcoded since variables can't be used here
-    key            = "dev/terraform.tfstate"
-    region         = "eu-west-2"
+    bucket       = "flaskapp-terraformstate-bucket" # hardcoded since variables can't be used here
+    key          = "dev/terraform.tfstate"
+    region       = "eu-west-2"
     use_lockfile = true
-    encrypt        = true
+    encrypt      = true
   }
 }
 
@@ -32,11 +32,11 @@ resource "aws_key_pair" "Ec2_key" {
 
 # EC2 Standalone Instance
 resource "aws_instance" "this" {
-  ami                         = data.aws_ami.latest_amazon_linux.id
-  instance_type               = var.instance_type
-  subnet_id                   = aws_subnet.public[0].id
-  vpc_security_group_ids      = [aws_security_group.alb_sg.id]
-  key_name                    = aws_key_pair.Ec2_key.key_name
+  ami                    = data.aws_ami.latest_amazon_linux.id
+  instance_type          = var.instance_type
+  subnet_id              = aws_subnet.public[0].id
+  vpc_security_group_ids = [aws_security_group.alb_sg.id]
+  key_name               = aws_key_pair.Ec2_key.key_name
 
   user_data = <<-EOF
               #!/bin/bash
@@ -69,7 +69,7 @@ resource "aws_launch_template" "flask_app" {
 
   network_interfaces {
     associate_public_ip_address = true
-    security_groups              = [aws_security_group.alb_sg.id]
+    security_groups             = [aws_security_group.alb_sg.id]
   }
 
   key_name  = aws_key_pair.Ec2_key.key_name
@@ -144,8 +144,8 @@ resource "aws_iam_role" "ecs_task_execution_role" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Action    = "sts:AssumeRole"
-      Effect    = "Allow"
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
       Principal = {
         Service = "ecs-tasks.amazonaws.com"
       }
@@ -210,8 +210,8 @@ resource "aws_ecs_service" "service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets         = aws_subnet.public[*].id
-    security_groups = [aws_security_group.ecs_task_sg.id]
+    subnets          = aws_subnet.public[*].id
+    security_groups  = [aws_security_group.ecs_task_sg.id]
     assign_public_ip = true
   }
 

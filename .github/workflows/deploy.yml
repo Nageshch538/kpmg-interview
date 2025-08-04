@@ -35,6 +35,7 @@ jobs:
         else
           echo "env_name=prod" >> $GITHUB_OUTPUT
         fi
+        
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v2
 

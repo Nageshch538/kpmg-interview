@@ -10,6 +10,6 @@ terraform {
 provider "aws" {
   # Configuration options
   region                  = var.aws_region
-  shared_credentials_file = "~/.aws/credentials"
+  shared_credentials_file = ["~/.aws/credentials"]
   profile                 = "default"
 }

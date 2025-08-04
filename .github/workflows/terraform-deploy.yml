@@ -3,7 +3,6 @@ name: Terraform-Infrastructure-Deployment
 on:
   push:
     branches:
-      - dev
       - staging
       - main
     paths:

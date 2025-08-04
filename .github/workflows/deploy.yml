@@ -33,30 +33,6 @@ jobs:
         else
           echo "env_name=prod" >> $GITHUB_OUTPUT
         fi
-
-    - name: Create tfvars file from GitHub secrets
-      run: echo 'ec2_public_key = "${{ secrets.EC2_PUBLIC_KEY }}"' > environments/dev.tfvars    
-
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v2
-
-    - name: Terraform Init
-      run: terraform init
-
-    - name: Terraform Format
-      run: terraform fmt -check
-
-    - name: Terraform Validate
-      run: terraform validate
-
-    - name: Terraform Plan
-      run: terraform plan -var="ec2_public_key=$EC2_PUBLIC_KEY"
-
-
-    - name: Terraform Apply
-      if: github.ref_name == 'main' || github.ref_name == 'staging' || github.ref_name == 'dev'
-      run: terraform apply -auto-approve -var-file="environments/${{ steps.set_env.outputs.env_name }}/${{ steps.set_env.outputs.env_name }}.tfvars"
-
         
     - name: Log in to Amazon ECR
       run: |

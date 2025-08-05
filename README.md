@@ -1,12 +1,12 @@
-# kpmg-interview# Demo app deployment
+# kpmg-interview#  app deployment
 
-Convert the Flask-based application into a Docker image
-Push it to ECR
-Launch it on ECS
-We’ll build a serverless CI/CD pipeline, step by step!
-
+# Convert the Flask-based application into a Docker image
+# Push it to ECR
+# Launch it on ECS
+Build a serverless CI/CD pipeline
+**
 Requirements
-To successfully follow the steps in this article, make sure you have the following accounts, tools, and prerequisite knowledge:
+To successfully follow the steps in this article, make sure have the following accounts, tools, and prerequisite knowledge:
 
 Accounts & Cloud Environment
 GitHub account — for repository and GitHub Actions usage

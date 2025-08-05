@@ -60,7 +60,7 @@ jobs:
         service: kpmg-challenge1-service
         wait-for-service-stability: true
 
-    - name: Force ECS Service Deployment (optional)
+    - name: ECS Deployment
       run: |
         aws ecs update-service \
           --cluster kpmg-challenge1-ecs-cluster \

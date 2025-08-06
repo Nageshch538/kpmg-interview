@@ -51,6 +51,9 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
+      - name: Terraform refresh
+        run: terraform refresh
+
       - name: Terraform Plan
         run: terraform plan -var="ec2_public_key=$EC2_PUBLIC_KEY"
 
